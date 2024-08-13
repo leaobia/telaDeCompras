@@ -25,6 +25,30 @@ const getProducts = async function () {
     }
 }
 
+const getProdutoById = async (id) => {
+    if (
+        id == "" || id == null || id == undefined || isNaN(id)
+    ) {
+        return message.ERROR_REQUIRE_FIELDS;
+    } else {
+        let dadosProdutoJson = {};
+    
+        let produtoDAO = require('../model/dao/productsDAO.js');
+        let dadosProduto = await produtoDAO.selectProductById(id);
+        if (dadosProduto) {
+            dadosProdutoJson.status = message.SUCCESS_REQUEST.status;
+            dadosProdutoJson.message = message.SUCCESS_REQUEST.message;
+            dadosProdutoJson.quantidade = dadosProduto.length;
+            dadosProdutoJson.produtos = dadosProduto;
+            return dadosProdutoJson;
+        } else {
+            return message.ERROR_REGISTER_NOT_FOUND;
+        }
+    }
+};
+
+
 module.exports = {
-    getProducts
+    getProducts,
+    getProdutoById
 }

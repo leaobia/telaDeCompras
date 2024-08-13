@@ -8,6 +8,7 @@
 const express = require('express');
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const bodyParserJSON = bodyParser.json();
 
 var message = require('./controller/modulo/config.js')
 
@@ -35,6 +36,21 @@ app.get('/v1/eCatalogos/produtos', cors(), async function (request, response) {
         response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
     }
 });
+
+app.get('/v1/eCatalogos/produtos/:id', cors(), bodyParserJSON, async function (request, response) {
+    let idProduto = request.params.id
+
+    let controllerProdutos = require('./controller/controller_products.js');
+    let dadosProdutos = await controllerProdutos.getProdutoById(idProduto);
+
+    if (dadosProdutos) {
+        response.json(dadosProdutos);
+        response.status(dadosProdutos.status);
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
+        response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
+    }
+})
 
 const PORT = 3000;
 app.listen(PORT, () => {
