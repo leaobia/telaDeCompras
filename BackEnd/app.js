@@ -52,6 +52,21 @@ app.get('/v1/eCatalogos/produtos/:id', cors(), bodyParserJSON, async function (r
     }
 })
 
+app.get('/v1/eCatalogos/images/:id', cors(), bodyParserJSON, async function (request, response) {
+    let idProduto = request.params.id
+
+    let controllerImages = require('./controller/controller_images.js');
+    let dadosImage = await controllerImages.getImageByIdProduto(idProduto);
+
+    if (dadosImage) {
+        response.json(dadosImage);
+        response.status(dadosImage.status);
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
+        response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
+    }
+})
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor está rodando na porta ${PORT}`);
