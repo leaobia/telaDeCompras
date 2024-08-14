@@ -15,15 +15,9 @@ const ERROR_INVALID_ID = {status: 400, message: 'O ID INFORMADO NA REQUISIÇÃO 
 
 const ERROR_REGISTER_NOT_FOUND = {status: 404, message: 'O SERVIDOR NÃO ENCONTROU O RECURSO SOLICITADO.'};
 
-const ERROR_INVALID_TOKEN = {status: 400, message: 'O TOKEN É INVÁLIDO, OU SEJA, NÃO É COMPÁTIVEL'};
-
-const ERROR_TOKEN_EXPIRADO = {status: 400, message: 'INTERVALO DE TEMPO ACABOU, TOKEN EXPIRADO'};
-
 /*************************************** MENSAGENS DE SUCESSO ***************************************/
 
 const SUCCESS_REQUEST = {status: 200, message: 'REQUISIÇÃO BEM SUCEDIDA'};
-
-const SUCCESS_VALID_TOKEN = {status: 200, message: 'TOKEN VÁLIDO'};
 
 module.exports = {
     // Exportes de erro
@@ -31,10 +25,7 @@ module.exports = {
     ERROR_INVALID_CONTENT_TYPE,
     ERROR_INVALID_ID,
     ERROR_REGISTER_NOT_FOUND,
-    ERROR_INVALID_TOKEN,
-    ERROR_TOKEN_EXPIRADO,
 
     // Exportes de sucesso
-    SUCCESS_REQUEST,
-    SUCCESS_VALID_TOKEN
+    SUCCESS_REQUEST
 };
