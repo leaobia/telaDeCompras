@@ -5,6 +5,7 @@ function ProductList() {
   const [paginaAtual, setPaginaAtual] = useState(0);
   const produtosPorPagina = 1;
   const [images, setImages] = useState({});
+  const [skus, setSkus] = useState({});
   const [image, setImage] = useState('');
 
   useEffect(() => {
@@ -16,7 +17,7 @@ function ProductList() {
   useEffect(() => {
     if (produtos[paginaAtual]) {
       const produtoAtual = produtos[paginaAtual];
-      if (!images[produtoAtual.id]) {
+      if (!images[produtoAtual.id] && !skus[produtoAtual.id]) {
         fetch(`http://localhost:3000/v1/eCatalogos/images/${produtoAtual.id}`)
           .then(response => response.json())
           .then(imageData => {
@@ -25,6 +26,11 @@ function ProductList() {
               [produtoAtual.id]: imageData.images
             }));
             setImage(imageData.images[0].path); 
+          });
+          fetch(`http://localhost:3000/v1/eCatalogos/skus/${produtoAtual.id}`)
+          .then(response => response.json())
+          .then(skusData => {
+           console.log(skusData);
           });
       } else {
         setImage(images[produtoAtual.id][0].path);
