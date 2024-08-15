@@ -1,6 +1,6 @@
 /*************************************************************************************
  * Objetivo: API para retornar dados de um sistema de catálogo de produtos
- * Autor: Bianca Leão
+ * Autora: Bianca Leão
  * Data: 12/08/2024
  * Versão: 1.0
  *************************************************************************************/
@@ -37,21 +37,6 @@ app.get('/v1/eCatalogos/produtos', cors(), async function (request, response) {
     }
 });
 
-app.get('/v1/eCatalogos/produtos/:id', cors(), bodyParserJSON, async function (request, response) {
-    let idProduto = request.params.id
-
-    let controllerProdutos = require('./controller/controller_products.js');
-    let dadosProdutos = await controllerProdutos.getProdutoById(idProduto);
-
-    if (dadosProdutos) {
-        response.json(dadosProdutos);
-        response.status(dadosProdutos.status);
-    } else {
-        response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
-        response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
-    }
-})
-
 app.get('/v1/eCatalogos/images/:id', cors(), bodyParserJSON, async function (request, response) {
     let idProduto = request.params.id
 
@@ -61,6 +46,20 @@ app.get('/v1/eCatalogos/images/:id', cors(), bodyParserJSON, async function (req
     if (dadosImage) {
         response.json(dadosImage);
         response.status(dadosImage.status);
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
+        response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
+    }
+})
+
+app.get('/v1/eCatalogos/skus/:id', cors(), bodyParserJSON, async function (request, response) {
+    let idSkus = parseInt(request.params.id)
+    let controllerSkus = require('./controller/controller_skus.js');
+    let dadosSkus = await controllerSkus.getSkusByIdProduto(idSkus);
+
+    if (dadosSkus) {
+        response.json(dadosSkus);
+        response.status(dadosSkus.status);
     } else {
         response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
         response.json(message.ERROR_INVALID_CONTENT_TYPE.message);

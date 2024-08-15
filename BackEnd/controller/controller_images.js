@@ -1,7 +1,7 @@
 /**************************************************************************************
  * Objetivo: Responsável pela regra de negócio referente ao CRUD de imagens
  * Data: 14/08/2024
- * Autor: Bianca Leão
+ * Autora: Bianca Leão
  * Versão: 1.0
  **************************************************************************************/
 
