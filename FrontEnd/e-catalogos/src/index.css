@@ -31,7 +31,6 @@ code {
   height: 100%;
   width: 30%;
 }
-
 .container__header{
   height: 5vh;
   background-color: #809CAA;
@@ -80,6 +79,75 @@ code {
   border-top: 4px solid #809CAA;
 }
 
+.linhaPai{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linha{
+  width: 80%;
+  height: 1px;
+  background-color: #CCD0CF;
+  margin-top: 4px;
+}
+
+.container__dados{
+  display: flex;
+  height: 6.5vh;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.container__pack-display{
+  background-color: #809CAB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+  height: 7.7vh;
+}
+
+.container__pack-quantity-selector{
+  background-color: teal;
+  height: 7.7vh;
+}
+
+.container__pack-item{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: auto;
+  background-color: tomato;
+}
+
+.container__pack-size{
+  border: 1px solid #FFF;
+  color: #fff;
+  border-radius: 50%;
+  padding: 6px 9px;
+  margin-left: 2vw;
+  z-index: 2;
+}
+
+.container__pack-stock{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 10px;
+  border-radius: 5px;
+  width: 37px;
+  height: 25px;
+  background: rgb(255, 255, 255);
+  color: rgb(111, 151, 171);
+  font-family: Roboto;
+  font-size: 20px;
+  margin: 0px 11px;
+  font-style: normal;
+  font-weight: 400;
+  z-index: 1;
+}
 
 @media (max-width:500px) {
   .container{

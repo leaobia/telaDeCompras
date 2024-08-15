@@ -51,14 +51,14 @@ function ProductList() {
       setPaginaAtual(paginaAtual - 1);
     }
   };
-  
+
 
   const produtoAtual = produtos[paginaAtual];
   return (
     <div className='container'>
       <header className='container__header'>
         <div className="container__header--categoria">
-        Categoria Name
+          Categoria Name
         </div>
       </header>
       {produtoAtual && (
@@ -67,46 +67,78 @@ function ProductList() {
             <div className='container__imagens'>
               <div className="container__imagem-grande" style={{ backgroundImage: `url(${image})` }}>
                 <button className="container__botao container__botao--anterior" onClick={paginaAnterior}>
-                &larr;
+                  &larr;
                 </button>
                 <button
                   className="container__botao container__botao--proxima"
                   onClick={proximaPagina}
                 >
-                &rarr;
+                  &rarr;
                 </button>
               </div>
-  
-              <div className='container__troca-imagem'>
-                {images[produtoAtual.id].map((img, index) => (
-                  <button
-                    key={index}
-                    className="container__thumbnail"
-                    onClick={() => setImage(img.path)}
-                  >
-                    <img
-                      src={img.path}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="container__thumbnail-img"
-                      style={{ width: 50, height: 50 }}
-                    />
-                  </button>
-                ))}
+
+              <div className="containerPesquisar">
+                <div className='container__troca-imagem'>
+                  {images[produtoAtual.id].map((img, index) => (
+                    <button
+                      key={index}
+                      className="container__thumbnail"
+                      onClick={() => setImage(img.path)}
+                    >
+                      <img
+                        src={img.path}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="container__thumbnail-img"
+                        style={{ width: 50, height: 50 }}
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
+
+
             </div>
           )}
-          <div className="container__dados">
-            botao, nome, referencia, preco
+
+          <div className="linhaPai">
+            <div className="linha"></div>
           </div>
+          <div className="container__dados">
+            <button className="container__button">&#8593;&#8595;</button>
+            <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
+            <span className="container__reference">REF: {produtoAtual.reference}</span>
+            <span className="container__price">
+              R$ <span className="container__price-value">{produtoAtual.price}</span>
+            </span>
+          </div>
+
           <div className="container__pack">
-            <div className="container__pack-display">aaaaaaaaaaaaaaaaaaaaaaa</div>
+            <div className="container__pack-display">
+              <div className="container__pack-item">
+                <span className="container__pack-size">P</span>
+                <span className="container__pack-stock">4</span>
+              </div>
+              <div className="container__pack-item">
+                <span className="container__pack-size">M</span>
+                <span className="container__pack-stock">1</span>
+              </div>
+              <div className="container__pack-item">
+                <span className="container__pack-size">G</span>
+                <span className="container__pack-stock">4</span>
+              </div>
+              <div className="container__pack-item">
+                <span className="container__pack-size">GG</span>
+                <span className="container__pack-stock"> 1</span>
+              </div>
+            </div>
+
             <div className="container__pack-quantity-selector">eeeeeeeeeeeeeeeeeee</div>
           </div>
         </div>
       )}
     </div>
   );
-  
+
 
 }
 export default ProductList;
