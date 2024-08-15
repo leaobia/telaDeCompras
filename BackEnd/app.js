@@ -66,6 +66,20 @@ app.get('/v1/eCatalogos/skus/:id', cors(), bodyParserJSON, async function (reque
     }
 })
 
+app.get('/v1/eCatalogos/colors/:id', cors(), bodyParserJSON, async function (request, response) {
+    let idCor = parseInt(request.params.id)
+    let controllerColors = require('./controller/controller_colors.js');
+    let dadosCores = await controllerColors.getColorsByIdProduto(idCor);
+
+    if (dadosCores) {
+        response.json(dadosCores);
+        response.status(dadosCores.status);
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status);
+        response.json(message.ERROR_INVALID_CONTENT_TYPE.message);
+    }
+})
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor está rodando na porta ${PORT}`);

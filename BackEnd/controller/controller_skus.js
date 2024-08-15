@@ -7,7 +7,7 @@
 
 var message = require('./modulo/config.js');
 
-// Retorna as imagens pelo id do produto
+// Retorna o estoque pelo id do produto
 const getSkusByIdProduto = async (id) => {
     if (id == "" || id == null || id == undefined || isNaN(id)) {
         return message.ERROR_REQUIRE_FIELDS;
