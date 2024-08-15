@@ -11,3 +11,78 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.App{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container{
+  border: 1px solid #000;
+  height: 100%;
+  width: 30%;
+}
+
+.container__header{
+  height: 5vh;
+  background-color: #809CAA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.container__header--categoria{
+  color: rgb(128, 156, 170);
+    text-align: center;
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    padding: 3px;
+    text-transform: uppercase;
+    border-radius: 5px;
+    background: rgb(253, 255, 253);
+}
+
+.container__imagem-grande{
+  width: 100%;
+  height: 65vh;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container__botao{
+  border-radius: 50%;
+  padding: 10px;
+  margin: 1%;
+  background-color: #809CAA;
+  border: 1px solid transparent;
+  color: #FFFF;
+}
+
+.container__botao:hover{
+  cursor: pointer;
+}
+
+.container__troca-imagem{
+  border-top: 4px solid #809CAA;
+}
+
+
+@media (max-width:500px) {
+  .container{
+    width: 100%;
+  }
+}
