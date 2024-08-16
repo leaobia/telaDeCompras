@@ -29,7 +29,7 @@ code {
 .container{
   border: 1px solid #000;
   height: 100%;
-  width: 30%;
+  width: 35%;
 }
 .container__header{
   height: 5vh;
@@ -97,13 +97,42 @@ code {
   display: flex;
   height: 6.5vh;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 1.5vw;
+  font-size: 1.3rem;
+}
+
+.container__button{
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  align-items: center;
+  background: rgb(93, 160, 173);
+  border-radius: 50%;
+  color: #fff;
+  border: 0.1px solid transparent;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.ref{
+  color: #668190;
 }
 
 .container__pack{
   color: #fff;
   font-size: 13px;
   display: flex;
+}
+
+.container__price{
+  font-size: 1rem;
+  color: #809CAB;
+}
+
+.container__price-value{
+  font-size: 1.3rem;
+  color: #000;
 }
 
 .container__pack-display{

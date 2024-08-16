@@ -119,9 +119,9 @@ function ProductList() {
           <div className="container__dados">
             <button className="container__button"  onClick={changeDirection}>&#8593;&#8595;</button>
             <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
-            <span className="container__reference">REF: {produtoAtual.reference}</span>
+            <span className="container__reference"><span className='ref'>REF: </span>{produtoAtual.reference}</span>
             <span className="container__price">
-              R$ <span className="container__price-value">{produtoAtual.price}</span>
+              R$<span className="container__price-value">{produtoAtual.price}</span>
             </span>
           </div>
 
