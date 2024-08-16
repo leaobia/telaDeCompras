@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import info from "./img/info.svg"
+import search from "./img/search.svg"
 
 function ProductList() {
   const [produtos, setProdutos] = useState([]);
@@ -8,7 +10,7 @@ function ProductList() {
   const [skus, setSkus] = useState({});
   const [image, setImage] = useState('');
   const [flexDirection, setflexDirection] = useState('column');
-  const [categoryList, setCategoryList] = useState({}); 
+  const [categoryList, setCategoryList] = useState({});
 
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
@@ -30,7 +32,7 @@ function ProductList() {
   }, []);
   
   useEffect(() => {
-    if (produtos[paginaAtual]) {
+    if (produtos.length > 0 && produtos[paginaAtual]) {
       const produtoAtual = produtos[paginaAtual];
       if (!images[produtoAtual.id] && !skus[produtoAtual.id]) {
         fetch(`http://localhost:3000/v1/eCatalogos/images/${produtoAtual.id}`)
@@ -40,7 +42,7 @@ function ProductList() {
               ...prevImages,
               [produtoAtual.id]: imageData.images
             }));
-            setImage(imageData.images[0].path);
+            setImage(imageData.images[0]?.path || '');
           });
         fetch(`http://localhost:3000/v1/eCatalogos/skus/${produtoAtual.id}`)
           .then(response => response.json())
@@ -50,8 +52,8 @@ function ProductList() {
               [produtoAtual.id]: skusData.skus
             }));
           });
-      } else {
-        setImage(images[produtoAtual.id][0].path);
+      } else if (images[produtoAtual.id] && images[produtoAtual.id].length > 0) {
+        setImage(images[produtoAtual.id][0]?.path || '');
       }
     }
   }, [paginaAtual, produtos, images, skus]);
@@ -104,6 +106,8 @@ function ProductList() {
               </div>
 
               <div className="containerPesquisar">
+              <img src={info} alt="btn informacoes" className='imgbtn' />
+              <img src={search} alt="btn pesquisar" className='imgbtn' />
                 <div className='container__troca-imagem'>
                   {images[produtoAtual.id].map((img, index) => (
                     <button

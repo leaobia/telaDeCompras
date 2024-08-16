@@ -20,4 +20,19 @@ router.get('/produtos', async (req, res) => {
     }
 });
 
+router.get('/produtos/:reference', async (req, res) => {
+    try {
+        let referencia = req.params.reference
+        let dadosProdutos = await controllerProdutos.getProductByReference(referencia);
+    
+        if (dadosProdutos) {
+            res.status(dadosProdutos.status).json(dadosProdutos);
+        } else {
+            res.status(message.ERROR_INVALID_CONTENT_TYPE.status).json(message.ERROR_INVALID_CONTENT_TYPE.message);
+        }
+    } catch (error) {
+        res.status(message.ERROR_INTERNAL_SYSTEM.status).json(message.ERROR_INTERNAL_SYSTEM.message);
+    }
+});
+
 module.exports = router;

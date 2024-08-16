@@ -55,7 +55,7 @@ code {
 
 .container__imagem-grande{
   width: 100%;
-  height: 65vh;
+  height: 63vh;
   background-size: cover;
   display: flex;
   align-items: center;
@@ -75,9 +75,9 @@ code {
   cursor: pointer;
 }
 
-.container__troca-imagem{
-  border-top: 4px solid #809CAA;
-}
+/* .container__troca-imagem{
+ 
+} */
 
 .linhaPai{
   width: 100%;
@@ -236,6 +236,29 @@ code {
 .quantity-selector__label{
   font-weight: bold;
 }
+
+.containerPesquisar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+  border-top: 4px solid #809CAA;
+
+}
+
+.imgbtn{
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.container__thumbnail{
+  background-color: transparent;
+  border: 1px solid #668190;
+  cursor: pointer;
+}
+
 @media (max-width:500px) {
   .container{
     width: 100%;
