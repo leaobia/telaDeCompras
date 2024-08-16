@@ -8,13 +8,24 @@ function ProductList() {
   const [skus, setSkus] = useState({});
   const [image, setImage] = useState('');
   const [flexDirection, setflexDirection] = useState('column');
+  const [categoryList, setCategoryList] = useState({}); 
 
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
       .then(response => response.json())
       .then(data => {
         setProdutos(data.produtos);
-        console.log(data.produtos.map(produto => produto.category));
+
+        const categorias = data.produtos.reduce((acc, produto) => {
+          const categoria = produto.category;
+          if (!acc[categoria]) {
+            acc[categoria] = 0;
+          }
+          acc[categoria] += 1;
+          return acc;
+        }, {});
+
+        setCategoryList(categorias);
       });
   }, []);
   
@@ -62,20 +73,18 @@ function ProductList() {
   };
 
   const changeDirection = () => {
-    if (flexDirection == "column") {
-      setflexDirection("column-reverse")
-    } else {
-      setflexDirection("column")
-    }
+    setflexDirection(flexDirection === "column" ? "column-reverse" : "column");
   };
 
-
   const produtoAtual = produtos[paginaAtual];
+  const categoriaAtual = produtoAtual ? produtoAtual.category : '';
+  const quantidadeNaCategoria = categoryList[categoriaAtual] || 0;
+
   return (
     <div className='container'>
       <header className='container__header'>
         <div className="container__header--categoria">
-          Categoria Name
+        ({quantidadeNaCategoria}) {categoriaAtual} 
         </div>
       </header>
       {produtoAtual && (
@@ -112,8 +121,6 @@ function ProductList() {
                   ))}
                 </div>
               </div>
-
-
             </div>
           )}
 
@@ -121,7 +128,7 @@ function ProductList() {
             <div className="linha"></div>
           </div>
           <div className="container__dados">
-            <button className="container__button"  onClick={changeDirection}>&#8593;&#8595;</button>
+            <button className="container__button" onClick={changeDirection}>&#8593;&#8595;</button>
             <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
             <span className="container__reference"><span className='ref'>REF: </span>{produtoAtual.reference}</span>
             <span className="container__price">
@@ -146,7 +153,6 @@ function ProductList() {
               </div>
             </div>
 
-
             <div className="container__pack-quantity-selector">
               <div className="quantity-selector">
                 <span className="quantity-selector__label">Atual</span>
@@ -163,13 +169,11 @@ function ProductList() {
                 <span className="quantity-selector__price">R$ 0,00</span>
               </div>
             </div>
-
           </div>
         </div>
       )}
     </div>
   );
-
-
 }
+
 export default ProductList;
