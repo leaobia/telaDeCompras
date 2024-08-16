@@ -130,9 +130,31 @@ function ProductList() {
                 <span className="container__pack-size">GG</span>
                 <span className="container__pack-stock"> 1</span>
               </div>
+
+              <span className='equal'>=</span>
+              <div className="container__pack-item">
+                <span>PACK</span>
+                <span className="container__pack-stock"> 10</span>
+              </div>
             </div>
 
-            <div className="container__pack-quantity-selector">eeeeeeeeeeeeeeeeeee</div>
+            <div className="container__pack-quantity-selector">
+              <div className="quantity-selector">
+                <span className="quantity-selector__label">Atual</span>
+                <span className="quantity-selector__price">R$ 0,00</span>
+              </div>
+
+              <div className="quantity-selector__btns">
+                <button className="quantity-selector__button">-</button>
+                <div className="quantity-selector__quantity">0</div>
+                <button className="quantity-selector__button">+</button>
+              </div>
+              <div className="quantity-selector">
+                <span className="quantity-selector__label">Acumulado</span>
+                <span className="quantity-selector__price">R$ 0,00</span>
+              </div>
+            </div>
+
           </div>
         </div>
       )}
