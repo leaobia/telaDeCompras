@@ -7,6 +7,7 @@ function ProductList() {
   const [images, setImages] = useState({});
   const [skus, setSkus] = useState({});
   const [image, setImage] = useState('');
+  const [flexDirection, setflexDirection] = useState('column');
 
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
@@ -47,11 +48,20 @@ function ProductList() {
       setPaginaAtual(paginaAtual + 1);
     }
   };
+
   const paginaAnterior = () => {
     if (paginaAtual === 0) {
       setPaginaAtual(Math.ceil(produtos.length / produtosPorPagina) - 1);
     } else {
       setPaginaAtual(paginaAtual - 1);
+    }
+  };
+
+  const changeDirection = () => {
+    if (flexDirection == "column") {
+      setflexDirection("column-reverse")
+    } else {
+      setflexDirection("column")
     }
   };
 
@@ -107,7 +117,7 @@ function ProductList() {
             <div className="linha"></div>
           </div>
           <div className="container__dados">
-            <button className="container__button">&#8593;&#8595;</button>
+            <button className="container__button"  onClick={changeDirection}>&#8593;&#8595;</button>
             <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
             <span className="container__reference">REF: {produtoAtual.reference}</span>
             <span className="container__price">
@@ -115,7 +125,7 @@ function ProductList() {
             </span>
           </div>
 
-          <div className="container__pack">
+          <div className="container__pack" style={{ flexDirection: flexDirection }}>
             <div className="container__pack-display">
               {skus[produtoAtual.id] && skus[produtoAtual.id].map((sku, index) => (
                 <div className="container__pack-item" key={index}>

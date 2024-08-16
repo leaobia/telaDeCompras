@@ -103,6 +103,7 @@ code {
 .container__pack{
   color: #fff;
   font-size: 13px;
+  display: flex;
 }
 
 .container__pack-display{
