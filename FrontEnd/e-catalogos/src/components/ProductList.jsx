@@ -12,8 +12,12 @@ function ProductList() {
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
       .then(response => response.json())
-      .then(data => setProdutos(data.produtos));
+      .then(data => {
+        setProdutos(data.produtos);
+        console.log(data.produtos.map(produto => produto.category));
+      });
   }, []);
+  
   useEffect(() => {
     if (produtos[paginaAtual]) {
       const produtoAtual = produtos[paginaAtual];
