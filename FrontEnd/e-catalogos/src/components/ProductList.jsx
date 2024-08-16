@@ -13,7 +13,6 @@ function ProductList() {
       .then(response => response.json())
       .then(data => setProdutos(data.produtos));
   }, []);
-
   useEffect(() => {
     if (produtos[paginaAtual]) {
       const produtoAtual = produtos[paginaAtual];
@@ -30,13 +29,17 @@ function ProductList() {
         fetch(`http://localhost:3000/v1/eCatalogos/skus/${produtoAtual.id}`)
           .then(response => response.json())
           .then(skusData => {
-            console.log(skusData);
+            setSkus(prevSkus => ({
+              ...prevSkus,
+              [produtoAtual.id]: skusData.skus
+            }));
           });
       } else {
         setImage(images[produtoAtual.id][0].path);
       }
     }
-  }, [paginaAtual, produtos, images]);
+  }, [paginaAtual, produtos, images, skus]);
+
   const proximaPagina = () => {
     if ((paginaAtual + 1) * produtosPorPagina >= produtos.length) {
       setPaginaAtual(0);
@@ -114,29 +117,21 @@ function ProductList() {
 
           <div className="container__pack">
             <div className="container__pack-display">
-              <div className="container__pack-item">
-                <span className="container__pack-size">P</span>
-                <span className="container__pack-stock">4</span>
-              </div>
-              <div className="container__pack-item">
-                <span className="container__pack-size">M</span>
-                <span className="container__pack-stock">1</span>
-              </div>
-              <div className="container__pack-item">
-                <span className="container__pack-size">G</span>
-                <span className="container__pack-stock">4</span>
-              </div>
-              <div className="container__pack-item">
-                <span className="container__pack-size">GG</span>
-                <span className="container__pack-stock"> 1</span>
-              </div>
-
+              {skus[produtoAtual.id] && skus[produtoAtual.id].map((sku, index) => (
+                <div className="container__pack-item" key={index}>
+                  <span className="container__pack-size">{sku.size}</span>
+                  <span className="container__pack-stock">{sku.stock}</span>
+                </div>
+              ))}
               <span className='equal'>=</span>
               <div className="container__pack-item">
                 <span>PACK</span>
-                <span className="container__pack-stock"> 10</span>
+                <span className="container__pack-stock">
+                  {skus[produtoAtual.id] && skus[produtoAtual.id].reduce((total, sku) => total + sku.stock, 0)}
+                </span>
               </div>
             </div>
+
 
             <div className="container__pack-quantity-selector">
               <div className="quantity-selector">
