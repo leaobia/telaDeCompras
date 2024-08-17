@@ -15,7 +15,7 @@ function ProductList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [coresList, setCoresList] = useState({});
-
+  const [inputReferencia, setInputReferencia] = useState('');
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
       .then(response => response.json())
@@ -100,6 +100,22 @@ function ProductList() {
     setModalOpen2(!modalOpen2);
   };
 
+  const buscarProdutoPorReferencia = (referencia) => {
+    fetch(`http://localhost:3000/v1/eCatalogos/produtos/${referencia}`)
+      .then(response => response.json())
+      .then(data => {
+        const produtoEncontrado = produtos.find(produto => produto.reference === referencia);
+        if (produtoEncontrado) {
+          setPaginaAtual(produtos.indexOf(produtoEncontrado));
+        }
+      });
+  };
+
+  const handleBlur = () => {
+    buscarProdutoPorReferencia(inputReferencia);
+    toggleModal2()
+  };
+
   const produtoAtual = produtos[paginaAtual];
   const categoriaAtual = produtoAtual ? produtoAtual.category : '';
   const quantidadeNaCategoria = categoryList[categoriaAtual] || 0;
@@ -117,127 +133,137 @@ function ProductList() {
             <p className='spanCores'>Cores</p>
             <div className="nomesCores">
               {coresList[produtoAtual.id] && coresList[produtoAtual.id][0] && (
-                <p className = 'nomeCor'style = {{ backgroundColor: `#${coresList[produtoAtual.id][0].hex_code}` }}>
-              {coresList[produtoAtual.id][0].name}
-            </p>
-  )}
-          </div>
+                <p className='nomeCor' style={{ backgroundColor: `#${coresList[produtoAtual.id][0].hex_code}` }}>
+                  {coresList[produtoAtual.id][0].name}
+                </p>
+              )}
+            </div>
 
 
-          <div className="modal-content__dados">
-            <span>Nome do produto: {produtoAtual.name}</span>
-            <span>Referencia: {produtoAtual.reference}</span>
-            <span>Marca: {produtoAtual.brand}</span>
-            <span>Categoria: {produtoAtual.category}</span>
-            <span>Genero: {produtoAtual.gender}</span>
-          </div>
-        </div></div>
-  )
-}
+            <div className="modal-content__dados">
+              <span>Nome do produto: {produtoAtual.name}</span>
+              <span>Referencia: {produtoAtual.reference}</span>
+              <span>Marca: {produtoAtual.brand}</span>
+              <span>Categoria: {produtoAtual.category}</span>
+              <span>Genero: {produtoAtual.gender}</span>
+            </div>
+          </div></div>
+      )
+      }
 
-{
-  modalOpen2 && (
-    <div className="modal"><div className="modal-content">
-      <span className="close" onClick={toggleModal2}>&times;</span>
-      <input type="text" placeholder='00.00.000' className='inputReferencia' />
-    </div></div>
-  )
-}
+      {
+        modalOpen2 && (
+          <div className="modal"><div className="modal-content">
+            <header>
+              BUSCAR POR REF
+              <span className="close" onClick={toggleModal2}>&times;</span>
+            </header>
+            <input
+              type="text"
+              placeholder='00.00.000'
+              className='inputReferencia'
+              value={inputReferencia}
+              onChange={(e) => setInputReferencia(e.target.value)}
+              onBlur={handleBlur}
+            />
+          </div></div>
+        )
+      }
 
-<header className='container__header'>
-  <div className="container__header--categoria">
-    ({quantidadeNaCategoria}) {categoriaAtual}
-  </div>
-</header>
-{
-  produtoAtual && (
-    <div className='container__produto'>
-      {images[produtoAtual.id] && images[produtoAtual.id].length > 0 && (
-        <div className='container__imagens'>
-          <div className="container__imagem-grande" style={{ backgroundImage: `url(${image})` }}>
-            <button className="container__botao container__botao--anterior" onClick={paginaAnterior}>
-              &larr;
-            </button>
-            <button
-              className="container__botao container__botao--proxima"
-              onClick={proximaPagina}
-            >
-              &rarr;
-            </button>
-          </div>
+      <header className='container__header'>
+        <div className="container__header--categoria">
+          ({quantidadeNaCategoria}) {categoriaAtual}
+        </div>
+      </header>
+      {
+        produtoAtual && (
+          <div className='container__produto'>
+            {images[produtoAtual.id] && images[produtoAtual.id].length > 0 && (
+              <div className='container__imagens'>
+                <div className="container__imagem-grande" style={{ backgroundImage: `url(${image})` }}>
+                  <button className="container__botao container__botao--anterior" onClick={paginaAnterior}>
+                    &larr;
+                  </button>
+                  <button
+                    className="container__botao container__botao--proxima"
+                    onClick={proximaPagina}
+                  >
+                    &rarr;
+                  </button>
+                </div>
 
-          <div className="containerPesquisar">
-            <img src={info} alt="btn informacoes" className='imgbtn' onClick={toggleModal} />
-            <img src={search} alt="btn pesquisar" className='imgbtn' onClick={toggleModal2} />
-            <div className='container__troca-imagem'>
-              {images[produtoAtual.id].map((img, index) => (
-                <button
-                  key={index}
-                  className="container__thumbnail"
-                  onClick={() => setImage(img.path)}
-                >
-                  <img
-                    src={img.path}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="container__thumbnail-img"
-                    style={{ width: 50, height: 50 }}
-                  />
-                </button>
-              ))}
+                <div className="containerPesquisar">
+                  <img src={info} alt="btn informacoes" className='imgbtn' onClick={toggleModal} />
+                  <img src={search} alt="btn pesquisar" className='imgbtn' onClick={toggleModal2} />
+                  <div className='container__troca-imagem'>
+                    {images[produtoAtual.id].map((img, index) => (
+                      <button
+                        key={index}
+                        className="container__thumbnail"
+                        onClick={() => setImage(img.path)}
+                      >
+                        <img
+                          src={img.path}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="container__thumbnail-img"
+                          style={{ width: 50, height: 50 }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="linhaPai">
+              <div className="linha"></div>
+            </div>
+            <div className="container__dados">
+              <button className="container__button" onClick={changeDirection}>&#8593;&#8595;</button>
+              <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
+              <span className="container__reference"><span className='ref'>REF: </span>{produtoAtual.reference}</span>
+              <span className="container__price">
+                R$<span className="container__price-value">{produtoAtual.price}</span>
+              </span>
+            </div>
+
+            <div className="container__pack" style={{ flexDirection: flexDirection }}>
+              <div className="container__pack-display">
+                {skus[produtoAtual.id] && skus[produtoAtual.id].map((sku, index) => (
+                  <div className="container__pack-item" key={index}>
+                    <span className="container__pack-size">{sku.size}</span>
+                    <span className="container__pack-stock">{sku.stock}</span>
+                  </div>
+                ))}
+                <span className='equal'>=</span>
+                <div className="container__pack-item">
+                  <span>PACK</span>
+                  <span className="container__pack-stock">
+                    {skus[produtoAtual.id] && skus[produtoAtual.id].reduce((total, sku) => total + sku.stock, 0)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="container__pack-quantity-selector">
+                <div className="quantity-selector">
+                  <span className="quantity-selector__label">Atual</span>
+                  <span className="quantity-selector__price">R$ 0,00</span>
+                </div>
+
+                <div className="quantity-selector__btns">
+                  <button className="quantity-selector__button">-</button>
+                  <div className="quantity-selector__quantity">0</div>
+                  <button className="quantity-selector__button">+</button>
+                </div>
+                <div className="quantity-selector">
+                  <span className="quantity-selector__label">Acumulado</span>
+                  <span className="quantity-selector__price">R$ 0,00</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
-      <div className="linhaPai">
-        <div className="linha"></div>
-      </div>
-      <div className="container__dados">
-        <button className="container__button" onClick={changeDirection}>&#8593;&#8595;</button>
-        <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
-        <span className="container__reference"><span className='ref'>REF: </span>{produtoAtual.reference}</span>
-        <span className="container__price">
-          R$<span className="container__price-value">{produtoAtual.price}</span>
-        </span>
-      </div>
-
-      <div className="container__pack" style={{ flexDirection: flexDirection }}>
-        <div className="container__pack-display">
-          {skus[produtoAtual.id] && skus[produtoAtual.id].map((sku, index) => (
-            <div className="container__pack-item" key={index}>
-              <span className="container__pack-size">{sku.size}</span>
-              <span className="container__pack-stock">{sku.stock}</span>
-            </div>
-          ))}
-          <span className='equal'>=</span>
-          <div className="container__pack-item">
-            <span>PACK</span>
-            <span className="container__pack-stock">
-              {skus[produtoAtual.id] && skus[produtoAtual.id].reduce((total, sku) => total + sku.stock, 0)}
-            </span>
-          </div>
-        </div>
-
-        <div className="container__pack-quantity-selector">
-          <div className="quantity-selector">
-            <span className="quantity-selector__label">Atual</span>
-            <span className="quantity-selector__price">R$ 0,00</span>
-          </div>
-
-          <div className="quantity-selector__btns">
-            <button className="quantity-selector__button">-</button>
-            <div className="quantity-selector__quantity">0</div>
-            <button className="quantity-selector__button">+</button>
-          </div>
-          <div className="quantity-selector">
-            <span className="quantity-selector__label">Acumulado</span>
-            <span className="quantity-selector__price">R$ 0,00</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+        )
+      }
     </div >
   );
 }
