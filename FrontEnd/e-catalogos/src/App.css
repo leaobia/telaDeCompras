@@ -28,10 +28,95 @@
   color: #61dafb;
 }
 
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  z-index: 1;
+  width: 90%;
+  max-width: calc(384px);
+  margin: 7svh auto;
+  height: 100%;
+  max-height: 65svh;
+  position: relative;
+  border: 0.1px solid transparent;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.modal-content header {
+  padding: 8px 20px;
+  background: rgb(128, 156, 170);
+  width: 100%;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-family: Roboto;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.close {
+  float: right;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.inputReferencia {
+  padding: 8px 12px;
+  font-family: Roboto;
+  font-size: 18px;
+  background-color: rgba(240, 240, 240, 0.863);
+  width: 100%;
+  margin: 12px 0px;
+}
+
+.modal-content__dados{
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  padding: 2%;
+}
+
+.nomesCores{
+  width: 100%;
+  display: flex;
+  margin-top: 1vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.nomeCor{
+  padding: 2px;
+  width: 45%;
+  color: rgb(255, 255, 255);
+  border: 1px solid rgb(255, 255, 255);
+  font-family: Roboto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  border-radius: 8px;
+}
+.spanCores{
+  margin-top: 1vh;
+  font-weight: bold;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
