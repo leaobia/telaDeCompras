@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import info from "./img/info.svg"
-import search from "./img/search.svg"
+import './css/Estoque.css'
+import './css/Header.css'
+import './css/ProductList.css'
+import Header from './Header'
+import ProdutoAtual from './ProdutoAtual';
 
 function ProductList() {
 
@@ -9,7 +12,6 @@ function ProductList() {
   const produtosPorPagina = 1;
   const [images, setImages] = useState({});
   const [skus, setSkus] = useState({});
-  const [image, setImage] = useState('');
   const [flexDirection, setflexDirection] = useState('column');
   const [categoryList, setCategoryList] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
@@ -19,6 +21,8 @@ function ProductList() {
   const [quantity, setQuantity] = useState(0);
   const [precoAtual, setPrecoAtual] = useState(0);
   const [precoAcumulado, setPrecoAcumulado] = useState(0);
+  const [image, setImage] = useState('');
+  const [currentImage, setCurrentImage] = useState('');
 
   const saveQuantityToLocalStorage = (produtoId, quantidade) => {
     localStorage.setItem(`quantidade-${produtoId}`, quantidade);
@@ -211,15 +215,15 @@ function ProductList() {
       .then(response => response.json())
       .then(data => {
         if (data.produtos && data.produtos.length > 0) {
-          const primeiroProduto = data.produtos[0]; 
-          const index = produtos.findIndex(produto => produto.id === primeiroProduto.id); 
+          const primeiroProduto = data.produtos[0];
+          const index = produtos.findIndex(produto => produto.id === primeiroProduto.id);
 
           if (index !== -1) {
-            setPaginaAtual(index); 
+            setPaginaAtual(index);
           }
         } else {
           console.log('Nenhum produto encontrado para a categoria:', categoria);
-          setPaginaAtual(0); 
+          setPaginaAtual(0);
         }
       })
       .catch(error => {
@@ -230,33 +234,36 @@ function ProductList() {
 
 
   const nextCategory = () => {
-    const categorias = Object.keys(categoryList); 
-    const indexAtual = categorias.indexOf(categoriaAtual); 
+    const categorias = Object.keys(categoryList);
+    const indexAtual = categorias.indexOf(categoriaAtual);
 
     if (indexAtual !== -1) {
-      const novoIndice = (indexAtual + 1) % categorias.length; 
-      const proximaCategoria = categorias[novoIndice]; 
+      const novoIndice = (indexAtual + 1) % categorias.length;
+      const proximaCategoria = categorias[novoIndice];
 
-      categoriaAtual = proximaCategoria; 
+      categoriaAtual = proximaCategoria;
       buscarProdutoPorCategoria(proximaCategoria);
     }
   };
 
   const backCategory = () => {
-    const categorias = Object.keys(categoryList); 
-    const indexAtual = categorias.indexOf(categoriaAtual); 
+    const categorias = Object.keys(categoryList);
+    const indexAtual = categorias.indexOf(categoriaAtual);
 
     if (indexAtual !== -1) {
-    
-      const novoIndice = (indexAtual - 1 + categorias.length) % categorias.length;
-      const categoriaAnterior = categorias[novoIndice]; 
 
-      categoriaAtual = categoriaAnterior; 
-      buscarProdutoPorCategoria(categoriaAnterior); 
+      const novoIndice = (indexAtual - 1 + categorias.length) % categorias.length;
+      const categoriaAnterior = categorias[novoIndice];
+
+      categoriaAtual = categoriaAnterior;
+      buscarProdutoPorCategoria(categoriaAnterior);
     }
   };
-
-
+  const handleImageChange = (newImage) => {
+    console.log('Imagem selecionada:', newImage);
+    setCurrentImage(newImage); // Atualiza o estado local da imagem
+    setImage(newImage); // Atualiza a imagem principal
+  };
 
   return (
     <div className='container'>
@@ -307,105 +314,33 @@ function ProductList() {
           </div></div>
         )
       }
-
-      <header className='container__header'>
-        <button onClick={backCategory}>back</button>
-        <div className="container__header--categoria">
-          ({quantidadeNaCategoria}) {categoriaAtual}
-        </div>
-        <button onClick={nextCategory}>next</button>
-      </header>
-      {
-        produtoAtual && (
-          <div className='container__produto'>
-            {images[produtoAtual.id] && images[produtoAtual.id].length > 0 && (
-              <div className='container__imagens'>
-                <div className="container__imagem-grande" style={{ backgroundImage: `url(${image})` }}>
-                  <button className="container__botao container__botao--anterior" onClick={paginaAnterior}>
-                    &larr;
-                  </button>
-                  <button
-                    className="container__botao container__botao--proxima"
-                    onClick={proximaPagina}
-                  >
-                    &rarr;
-                  </button>
-                </div>
-
-                <div className="containerPesquisar">
-                  <img src={info} alt="btn informacoes" className='imgbtn' onClick={toggleModal} />
-                  <img src={search} alt="btn pesquisar" className='imgbtn' onClick={toggleModal2} />
-                  <div className='container__troca-imagem'>
-                    {images[produtoAtual.id].map((img, index) => (
-                      <button
-                        key={index}
-                        className="container__thumbnail"
-                        onClick={() => setImage(img.path)}
-                      >
-                        <img
-                          src={img.path}
-                          alt={`Thumbnail ${index + 1}`}
-                          className="container__thumbnail-img"
-                          style={{ width: 50, height: 50 }}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="linhaPai">
-              <div className="linha"></div>
-            </div>
-            <div className="container__dados">
-              <button className="container__button" onClick={changeDirection}>&#8593;&#8595;</button>
-              <span className="container__name">{produtoAtual.name.split(' ')[0].toLowerCase()}</span>
-              <span className="container__reference"><span className='ref'>REF: </span>{produtoAtual.reference}</span>
-              <span className="container__price">
-                R$<span className="container__price-value">{produtoAtual.price}</span>
-              </span>
-            </div>
-
-            <div className="container__pack" style={{ flexDirection: flexDirection }}>
-              <div className="container__pack-display">
-                {skus[produtoAtual.id] && skus[produtoAtual.id].map((sku, index) => (
-                  <div className="container__pack-item" key={index}>
-                    <span className="container__pack-size">{sku.size}</span>
-                    <span className="container__pack-stock">{sku.stock}</span>
-                  </div>
-                ))}
-                <span className='equal'>=</span>
-                <div className="container__pack-item">
-                  <span>PACK</span>
-                  <span className="container__pack-stock container-pack-total">
-                    {skus[produtoAtual.id] && skus[produtoAtual.id].reduce((total, sku) => total + sku.stock, 0)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="container__pack-quantity-selector">
-                <div className="quantity-selector">
-                  <span className="quantity-selector__label">Atual</span>
-                  <span className="quantity-selector__price">R$ {precoAtual}</span>
-                </div>
-
-                <div className="quantity-selector__btns">
-                  <button className="quantity-selector__button" onClick={diminuirQuantidade}>-</button>
-                  <div className="quantity-selector__quantity">{quantity}</div>
-                  <button className="quantity-selector__button" onClick={adicionaQuantidade}>+</button>
-                </div>
-                <div className="quantity-selector">
-                  <span className="quantity-selector__label">Acumulado</span>
-                  <span className="quantity-selector__price">R$ {precoAcumulado}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      }
-    </div >
+  <Header
+        categoriaAtual={categoriaAtual}
+        quantidadeNaCategoria={quantidadeNaCategoria}
+        backCategory={backCategory}
+        nextCategory={nextCategory}
+      />
+      {produtoAtual && (
+        <ProdutoAtual
+          produtoAtual={produtoAtual}
+          images={images}
+          skus={skus}
+          paginaAnterior={paginaAnterior}
+          proximaPagina={proximaPagina}
+          toggleModal={toggleModal}
+          toggleModal2={toggleModal2}
+          setImage={handleImageChange}
+          changeDirection={changeDirection}
+          precoAtual={precoAtual}
+          precoAcumulado={precoAcumulado}
+          quantity={quantity}
+          diminuirQuantidade={diminuirQuantidade}
+          adicionaQuantidade={adicionaQuantidade}
+          flexDirection={flexDirection}
+        />
+      )}
+    </div>
   );
-}
+};
 
 export default ProductList;
