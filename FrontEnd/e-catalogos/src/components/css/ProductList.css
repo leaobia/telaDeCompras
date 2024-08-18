@@ -167,6 +167,20 @@
   font-size: 14px;
 }
 
+.refError{
+  margin-top: 4%;
+  color: red;
+  font-size: 14px;
+}
+
+.d-none{
+  display: none;
+}
+
+.d-flex{
+  display: flex;
+}
+
 @media (max-width: 500px) {
   .container {
     width: 100%;

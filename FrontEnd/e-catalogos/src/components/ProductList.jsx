@@ -83,7 +83,7 @@ function ProductList() {
             return response.json();
           })
           .then(colorsData => {
-            const cores = colorsData.colors || []; 
+            const cores = colorsData.colors || [];
 
             setCoresList(prevCoresList => ({
               ...prevCoresList,
@@ -215,21 +215,41 @@ function ProductList() {
     }
   };
 
+  const exibirMensagemDeErro = () => {
+    const refError = document.querySelector(".refError");
+    refError.classList.add('d-flex');
+    refError.classList.remove('d-none');
+
+  };
+
+
+
   const buscarProdutoPorReferencia = (referencia) => {
     fetch(`http://localhost:3000/v1/eCatalogos/produtos/${referencia}`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          exibirMensagemDeErro();
+        }
+        return response.json();
+      })
       .then(data => {
         const produtoEncontrado = produtos.find(produto => produto.reference === referencia);
         if (produtoEncontrado) {
           setPaginaAtual(produtos.indexOf(produtoEncontrado));
+          toggleModal2()
+          setInputReferencia('')
+        } else {
+          exibirMensagemDeErro();
         }
+      })
+      .catch(error => {
+        alert(error.message);
       });
   };
 
+
   const handleBlur = () => {
     buscarProdutoPorReferencia(inputReferencia);
-    toggleModal2()
-    setInputReferencia('')
   };
 
   const produtoAtual = produtos[paginaAtual];
@@ -359,6 +379,7 @@ function ProductList() {
                 onChange={(e) => setInputReferencia(e.target.value)}
               />
               <button className='buscarBtn' onClick={handleBlur}>Buscar</button>
+              <span className='refError d-none'>Referência não encontrada</span>
             </div>
           </div></div>
         )
