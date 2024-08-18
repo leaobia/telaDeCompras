@@ -35,7 +35,22 @@ const selectProductsByReference = async function (reference) {
     }
 }
 
+// Retorna produtos pela categoria
+const selectProductsByCategory = async function (category) {
+
+    let sql = `SELECT * FROM products where category = '${category}'`;
+    
+    let rsProducts = await prisma.$queryRawUnsafe(sql);
+
+    if (rsProducts.length > 0) {
+        return rsProducts;
+    } else {
+        return false;
+    }
+}
+
 module.exports = {
     selectAllProducts,
-    selectProductsByReference
+    selectProductsByReference,
+    selectProductsByCategory
 }

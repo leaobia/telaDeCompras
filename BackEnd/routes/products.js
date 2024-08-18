@@ -13,10 +13,26 @@ const message = require('../controller/modulo/config.js');
 
 router.get('/produtos', async (req, res) => {
     let dadosProdutos = await controllerProdutos.getProducts();
+    console.log("produtos");
     if (dadosProdutos) {
         res.status(dadosProdutos.status).json(dadosProdutos);
     } else {
         res.status(message.ERROR_INVALID_CONTENT_TYPE.status).json(message.ERROR_INVALID_CONTENT_TYPE.message);
+    }
+});
+
+router.get('/produtos/categoria/:category', async (req, res) => {
+    try {
+        let category = req.params.category
+        let dadosProdutos = await controllerProdutos.getProductByCategory(category);
+    
+        if (dadosProdutos) {
+            res.status(dadosProdutos.status).json(dadosProdutos);
+        } else {
+            res.status(message.ERROR_INVALID_CONTENT_TYPE.status).json(message.ERROR_INVALID_CONTENT_TYPE.message);
+        }
+    } catch (error) {
+        res.status(message.ERROR_INTERNAL_SYSTEM.status).json(message.ERROR_INTERNAL_SYSTEM.message);
     }
 });
 

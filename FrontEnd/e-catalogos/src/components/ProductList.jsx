@@ -125,38 +125,38 @@ function ProductList() {
   const savePrecoAcumuladoToLocalStorage = (precoAcumulado) => {
     localStorage.setItem('precoAcumulado', precoAcumulado);
   };
-  
+
   const loadPrecoAcumuladoFromLocalStorage = () => {
     const precoAcumulado = localStorage.getItem('precoAcumulado');
     return precoAcumulado ? parseFloat(precoAcumulado) : 0;
   };
-  
+
   useEffect(() => {
     const precoAcumuladoSalvo = loadPrecoAcumuladoFromLocalStorage();
     setPrecoAcumulado(precoAcumuladoSalvo);
   }, []);
-  
+
   const adicionaQuantidade = () => {
     const produtoAtual = produtos[paginaAtual];
     let containerpacktotal = parseFloat(document.querySelector('.container-pack-total').textContent) || 1;
     if (produtoAtual) {
 
       const novaQuantidade = quantity + 1;
-      
+
       const precoAtualAntigo = produtoAtual.price * quantity * containerpacktotal;
       const novoPrecoAtual = produtoAtual.price * novaQuantidade * containerpacktotal;
-      
+
       setQuantity(novaQuantidade);
       setPrecoAtual(novoPrecoAtual);
 
       const novoPrecoAcumulado = precoAcumulado - precoAtualAntigo + novoPrecoAtual;
       setPrecoAcumulado(novoPrecoAcumulado);
       savePrecoAcumuladoToLocalStorage(novoPrecoAcumulado);
-  
+
       saveQuantityToLocalStorage(produtoAtual.id, novaQuantidade);
     }
   };
-  
+
   const diminuirQuantidade = () => {
     if (quantity > 0) {
       const produtoAtual = produtos[paginaAtual];
@@ -164,25 +164,25 @@ function ProductList() {
       if (produtoAtual) {
 
         const novaQuantidade = quantity - 1;
-        
+
 
         const precoAtualAntigo = produtoAtual.price * quantity * containerpacktotal;
         const novoPrecoAtual = produtoAtual.price * novaQuantidade * containerpacktotal;
-        
+
         setQuantity(novaQuantidade);
         setPrecoAtual(novoPrecoAtual);
-  
-  
+
+
         const novoPrecoAcumulado = precoAcumulado - precoAtualAntigo + novoPrecoAtual;
         setPrecoAcumulado(novoPrecoAcumulado);
         savePrecoAcumuladoToLocalStorage(novoPrecoAcumulado);
-  
+
         saveQuantityToLocalStorage(produtoAtual.id, novaQuantidade);
       }
     }
   };
-  
-  
+
+
 
 
   const buscarProdutoPorReferencia = (referencia) => {
@@ -202,8 +202,61 @@ function ProductList() {
   };
 
   const produtoAtual = produtos[paginaAtual];
-  const categoriaAtual = produtoAtual ? produtoAtual.category : '';
+  var categoriaAtual = produtoAtual ? produtoAtual.category : '';
   const quantidadeNaCategoria = categoryList[categoriaAtual] || 0;
+
+
+  const buscarProdutoPorCategoria = (categoria) => {
+    fetch(`http://localhost:3000/v1/eCatalogos/produtos/categoria/${categoria}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.produtos && data.produtos.length > 0) {
+          const primeiroProduto = data.produtos[0]; 
+          const index = produtos.findIndex(produto => produto.id === primeiroProduto.id); 
+
+          if (index !== -1) {
+            setPaginaAtual(index); 
+          }
+        } else {
+          console.log('Nenhum produto encontrado para a categoria:', categoria);
+          setPaginaAtual(0); 
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao buscar produtos por categoria:', error);
+      });
+  };
+
+
+
+  const nextCategory = () => {
+    const categorias = Object.keys(categoryList); 
+    const indexAtual = categorias.indexOf(categoriaAtual); 
+
+    if (indexAtual !== -1) {
+      const novoIndice = (indexAtual + 1) % categorias.length; 
+      const proximaCategoria = categorias[novoIndice]; 
+
+      categoriaAtual = proximaCategoria; 
+      buscarProdutoPorCategoria(proximaCategoria);
+    }
+  };
+
+  const backCategory = () => {
+    const categorias = Object.keys(categoryList); 
+    const indexAtual = categorias.indexOf(categoriaAtual); 
+
+    if (indexAtual !== -1) {
+    
+      const novoIndice = (indexAtual - 1 + categorias.length) % categorias.length;
+      const categoriaAnterior = categorias[novoIndice]; 
+
+      categoriaAtual = categoriaAnterior; 
+      buscarProdutoPorCategoria(categoriaAnterior); 
+    }
+  };
+
+
 
   return (
     <div className='container'>
@@ -256,9 +309,11 @@ function ProductList() {
       }
 
       <header className='container__header'>
+        <button onClick={backCategory}>back</button>
         <div className="container__header--categoria">
           ({quantidadeNaCategoria}) {categoriaAtual}
         </div>
+        <button onClick={nextCategory}>next</button>
       </header>
       {
         produtoAtual && (
