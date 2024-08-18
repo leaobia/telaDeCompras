@@ -16,6 +16,19 @@ function ProductList() {
   const [modalOpen2, setModalOpen2] = useState(false);
   const [coresList, setCoresList] = useState({});
   const [inputReferencia, setInputReferencia] = useState('');
+  const [quantity, setQuantity] = useState(0);
+  const [precoAtual, setPrecoAtual] = useState(0);
+  const [precoAcumulado, setPrecoAcumulado] = useState(0);
+
+  const saveQuantityToLocalStorage = (produtoId, quantidade) => {
+    localStorage.setItem(`quantidade-${produtoId}`, quantidade);
+  };
+
+  const loadQuantityFromLocalStorage = (produtoId) => {
+    const quantidade = localStorage.getItem(`quantidade-${produtoId}`);
+    return quantidade ? parseInt(quantidade, 10) : 0;
+  };
+
   useEffect(() => {
     fetch('http://localhost:3000/v1/eCatalogos/produtos')
       .then(response => response.json())
@@ -47,7 +60,6 @@ function ProductList() {
               ...prevImages,
               [produtoAtual.id]: imageData.images
             }));
-
           });
         fetch(`http://localhost:3000/v1/eCatalogos/skus/${produtoAtual.id}`)
           .then(response => response.json())
@@ -64,12 +76,19 @@ function ProductList() {
               [produtoAtual.id]: colorsData.colors
             });
           });
-
       } else if (images[produtoAtual.id] && images[produtoAtual.id].length > 0) {
         setImage(images[produtoAtual.id][0]?.path || '');
       }
+
+      const quantidadeSalva = loadQuantityFromLocalStorage(produtoAtual.id);
+      setQuantity(quantidadeSalva);
+      let containerpacktotal = parseFloat(document.querySelector('.container-pack-total').textContent) || 1;
+      const precoProdutoAtual = produtoAtual.price * quantidadeSalva * containerpacktotal;
+      setPrecoAtual(precoProdutoAtual);
+
     }
   }, [paginaAtual, produtos, images, skus]);
+
 
   const proximaPagina = () => {
     if ((paginaAtual + 1) * produtosPorPagina >= produtos.length) {
@@ -77,6 +96,7 @@ function ProductList() {
     } else {
       setPaginaAtual(paginaAtual + 1);
     }
+    setQuantity(loadQuantityFromLocalStorage(produtos[paginaAtual].id));
   };
 
   const paginaAnterior = () => {
@@ -85,7 +105,9 @@ function ProductList() {
     } else {
       setPaginaAtual(paginaAtual - 1);
     }
+    setQuantity(loadQuantityFromLocalStorage(produtos[paginaAtual].id));
   };
+
 
   const changeDirection = () => {
     setflexDirection(flexDirection === "column" ? "column-reverse" : "column");
@@ -99,6 +121,69 @@ function ProductList() {
   const toggleModal2 = () => {
     setModalOpen2(!modalOpen2);
   };
+
+  const savePrecoAcumuladoToLocalStorage = (precoAcumulado) => {
+    localStorage.setItem('precoAcumulado', precoAcumulado);
+  };
+  
+  const loadPrecoAcumuladoFromLocalStorage = () => {
+    const precoAcumulado = localStorage.getItem('precoAcumulado');
+    return precoAcumulado ? parseFloat(precoAcumulado) : 0;
+  };
+  
+  useEffect(() => {
+    const precoAcumuladoSalvo = loadPrecoAcumuladoFromLocalStorage();
+    setPrecoAcumulado(precoAcumuladoSalvo);
+  }, []);
+  
+  const adicionaQuantidade = () => {
+    const produtoAtual = produtos[paginaAtual];
+    let containerpacktotal = parseFloat(document.querySelector('.container-pack-total').textContent) || 1;
+    if (produtoAtual) {
+
+      const novaQuantidade = quantity + 1;
+      
+      const precoAtualAntigo = produtoAtual.price * quantity * containerpacktotal;
+      const novoPrecoAtual = produtoAtual.price * novaQuantidade * containerpacktotal;
+      
+      setQuantity(novaQuantidade);
+      setPrecoAtual(novoPrecoAtual);
+
+      const novoPrecoAcumulado = precoAcumulado - precoAtualAntigo + novoPrecoAtual;
+      setPrecoAcumulado(novoPrecoAcumulado);
+      savePrecoAcumuladoToLocalStorage(novoPrecoAcumulado);
+  
+      saveQuantityToLocalStorage(produtoAtual.id, novaQuantidade);
+    }
+  };
+  
+  const diminuirQuantidade = () => {
+    if (quantity > 0) {
+      const produtoAtual = produtos[paginaAtual];
+      let containerpacktotal = parseFloat(document.querySelector('.container-pack-total').textContent) || 1;
+      if (produtoAtual) {
+
+        const novaQuantidade = quantity - 1;
+        
+
+        const precoAtualAntigo = produtoAtual.price * quantity * containerpacktotal;
+        const novoPrecoAtual = produtoAtual.price * novaQuantidade * containerpacktotal;
+        
+        setQuantity(novaQuantidade);
+        setPrecoAtual(novoPrecoAtual);
+  
+  
+        const novoPrecoAcumulado = precoAcumulado - precoAtualAntigo + novoPrecoAtual;
+        setPrecoAcumulado(novoPrecoAcumulado);
+        savePrecoAcumuladoToLocalStorage(novoPrecoAcumulado);
+  
+        saveQuantityToLocalStorage(produtoAtual.id, novaQuantidade);
+      }
+    }
+  };
+  
+  
+
 
   const buscarProdutoPorReferencia = (referencia) => {
     fetch(`http://localhost:3000/v1/eCatalogos/produtos/${referencia}`)
@@ -238,7 +323,7 @@ function ProductList() {
                 <span className='equal'>=</span>
                 <div className="container__pack-item">
                   <span>PACK</span>
-                  <span className="container__pack-stock">
+                  <span className="container__pack-stock container-pack-total">
                     {skus[produtoAtual.id] && skus[produtoAtual.id].reduce((total, sku) => total + sku.stock, 0)}
                   </span>
                 </div>
@@ -247,17 +332,17 @@ function ProductList() {
               <div className="container__pack-quantity-selector">
                 <div className="quantity-selector">
                   <span className="quantity-selector__label">Atual</span>
-                  <span className="quantity-selector__price">R$ 0,00</span>
+                  <span className="quantity-selector__price">R$ {precoAtual}</span>
                 </div>
 
                 <div className="quantity-selector__btns">
-                  <button className="quantity-selector__button">-</button>
-                  <div className="quantity-selector__quantity">0</div>
-                  <button className="quantity-selector__button">+</button>
+                  <button className="quantity-selector__button" onClick={diminuirQuantidade}>-</button>
+                  <div className="quantity-selector__quantity">{quantity}</div>
+                  <button className="quantity-selector__button" onClick={adicionaQuantidade}>+</button>
                 </div>
                 <div className="quantity-selector">
                   <span className="quantity-selector__label">Acumulado</span>
-                  <span className="quantity-selector__price">R$ 0,00</span>
+                  <span className="quantity-selector__price">R$ {precoAcumulado}</span>
                 </div>
               </div>
             </div>
