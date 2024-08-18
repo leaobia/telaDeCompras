@@ -17,12 +17,14 @@ function ProductList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [coresList, setCoresList] = useState({});
+  const [cores, setCores] = useState([]);
   const [inputReferencia, setInputReferencia] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [precoAtual, setPrecoAtual] = useState(0);
   const [precoAcumulado, setPrecoAcumulado] = useState(0);
   const [image, setImage] = useState('');
   const [currentImage, setCurrentImage] = useState('');
+  const [corSelecionada, setCorSelecionada] = useState(null);
 
   const saveQuantityToLocalStorage = (produtoId, quantidade) => {
     localStorage.setItem(`quantidade-${produtoId}`, quantidade);
@@ -74,12 +76,40 @@ function ProductList() {
             }));
           });
         fetch(`http://localhost:3000/v1/eCatalogos/colors/${produtoAtual.id}`)
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Não foi possível encontrar as cores para este produto');
+            }
+            return response.json();
+          })
           .then(colorsData => {
-            setCoresList({
-              [produtoAtual.id]: colorsData.colors
-            });
+            const cores = colorsData.colors || []; 
+
+            setCoresList(prevCoresList => ({
+              ...prevCoresList,
+              [produtoAtual.id]: cores
+            }));
+
+            if (cores.length > 0) {
+              setCorSelecionada(prevCorSelecionada => {
+                return (prevCorSelecionada && cores.some(cor => cor.hex_code === prevCorSelecionada))
+                  ? prevCorSelecionada
+                  : cores[0].hex_code;
+              });
+            } else {
+              setCorSelecionada(null);
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao buscar cores:', error);
+            setCoresList(prevCoresList => ({
+              ...prevCoresList,
+              [produtoAtual.id]: []
+            }));
+            setCorSelecionada(null);
           });
+
+
       } else if (images[produtoAtual.id] && images[produtoAtual.id].length > 0) {
         setImage(images[produtoAtual.id][0]?.path || '');
       }
@@ -118,7 +148,6 @@ function ProductList() {
   };
 
   const toggleModal = () => {
-    console.log(coresList);
     setModalOpen(!modalOpen);
   };
 
@@ -186,9 +215,6 @@ function ProductList() {
     }
   };
 
-
-
-
   const buscarProdutoPorReferencia = (referencia) => {
     fetch(`http://localhost:3000/v1/eCatalogos/produtos/${referencia}`)
       .then(response => response.json())
@@ -203,6 +229,7 @@ function ProductList() {
   const handleBlur = () => {
     buscarProdutoPorReferencia(inputReferencia);
     toggleModal2()
+    setInputReferencia('')
   };
 
   const produtoAtual = produtos[paginaAtual];
@@ -260,10 +287,19 @@ function ProductList() {
     }
   };
   const handleImageChange = (newImage) => {
-    console.log('Imagem selecionada:', newImage);
-    setCurrentImage(newImage); // Atualiza o estado local da imagem
-    setImage(newImage); // Atualiza a imagem principal
+    setCurrentImage(newImage);
+    setImage(newImage);
   };
+
+  useEffect(() => {
+    if (produtoAtual && coresList && coresList[produtoAtual.id]) {
+      setCores(coresList[produtoAtual.id]);
+    } else {
+      setCores([]);
+    }
+  }, [produtoAtual, coresList]);
+
+
 
   return (
     <div className='container'>
@@ -277,20 +313,31 @@ function ProductList() {
             </header>
             <p className='spanCores'>Cores</p>
             <div className="nomesCores">
-              {coresList[produtoAtual.id] && coresList[produtoAtual.id][0] && (
-                <p className='nomeCor' style={{ backgroundColor: `#${coresList[produtoAtual.id][0].hex_code}` }}>
-                  {coresList[produtoAtual.id][0].name}
-                </p>
-              )}
+
+              <div className='cores-list'>
+                {coresList[produtoAtual.id] && coresList[produtoAtual.id].length > 0 && (
+                  coresList[produtoAtual.id].map((cor, index) => (
+                    <p
+                      key={index}
+                      className='nomeCor'
+                      style={{ backgroundColor: `#${cor.hex_code}` }}
+                      onClick={() => setCorSelecionada(cor.hex_code)}
+                    >
+                      {cor.name}
+                    </p>
+                  ))
+                )}
+              </div>
+
             </div>
 
 
             <div className="modal-content__dados">
-              <span>Nome do produto: {produtoAtual.name}</span>
-              <span>Referencia: {produtoAtual.reference}</span>
-              <span>Marca: {produtoAtual.brand}</span>
-              <span>Categoria: {produtoAtual.category}</span>
-              <span>Genero: {produtoAtual.gender}</span>
+              <span className='productNome'> <span className='topico'>Nome do produto:</span> {produtoAtual.name}</span>
+              <span><span className='topico'>Referencia:</span> {produtoAtual.reference}</span>
+              <span><span className='topico'>Marca:</span> {produtoAtual.brand}</span>
+              <span><span className='topico'>Categoria:</span> {produtoAtual.category}</span>
+              <span><span className='topico'>Genero:</span> {produtoAtual.gender}</span>
             </div>
           </div></div>
       )
@@ -303,18 +350,20 @@ function ProductList() {
               BUSCAR POR REF
               <span className="close" onClick={toggleModal2}>&times;</span>
             </header>
-            <input
-              type="text"
-              placeholder='00.00.000'
-              className='inputReferencia'
-              value={inputReferencia}
-              onChange={(e) => setInputReferencia(e.target.value)}
-              onBlur={handleBlur}
-            />
+            <div className="modal-content__search">
+              <input
+                type="text"
+                placeholder='00.00.000'
+                className='inputReferencia'
+                value={inputReferencia}
+                onChange={(e) => setInputReferencia(e.target.value)}
+              />
+              <button className='buscarBtn' onClick={handleBlur}>Buscar</button>
+            </div>
           </div></div>
         )
       }
-  <Header
+      <Header
         categoriaAtual={categoriaAtual}
         quantidadeNaCategoria={quantidadeNaCategoria}
         backCategory={backCategory}

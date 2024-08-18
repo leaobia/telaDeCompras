@@ -33,7 +33,6 @@ const ProdutoAtual = ({
   }, [produtoAtual, imagens]);
 
   const handleImageChange = (newImage) => {
-    console.log('Imagem selecionada:', newImage);
     setCurrentImage(newImage); 
     setImage(newImage); 
   };
